@@ -1,10 +1,9 @@
 const express = require("express");
-const cors = require("cors")
+const cors = require("cors");
 const { default: mongoose } = require("mongoose");
 const dotenv = require("dotenv");
 const userRouter = require("./Routes/UserRoutes");
 const app = express();
-
 
 dotenv.config();
 
@@ -16,6 +15,17 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+// Serve static files with correct MIME types
+app.use(
+  express.static(path.join(__dirname, "public"), {
+    // Set custom MIME types
+    setHeaders: (res, path, stat) => {
+      if (path.endsWith(".js")) {
+        res.set("Content-Type", "application/javascript");
+      }
+    },
+  })
+);
 app.use(express.json());
 app.use(cors());
 app.use("/api/auth", userRouter);
